@@ -1,7 +1,8 @@
 ///
-import { utils, hd } from './crypto-utils'
 import { TezosToolkit } from '@taquito/taquito'
 import { InMemorySigner } from '@taquito/signer'
+import { mnemonicToSeed } from './crypto-utils/utils'
+import { keyPairFromAccountIndex } from './crypto-utils/hd'
 ///
 const balanceDiv = 1000000 // div by 1M
 /// 
@@ -11,8 +12,8 @@ let tezos = new TezosToolkit(rpcUrl)            // init new instance.
 // mnemonic_sample.join(' ').toLowerCase().replace(/(\r\n|\n|\r)/gm, ' ').trim()
 ///
 let mnemonic = 'run include giggle half dizzy worth broccoli faith current wheel depth juice reduce width doctor'
-let seed = utils.mnemonicToSeed(mnemonic, '', true)
-let keyPair = hd.keyPairFromAccountIndex(seed, 0)
+let seed = mnemonicToSeed(mnemonic, '', true)
+let keyPair = keyPairFromAccountIndex(seed, 0)
 const signer = new InMemorySigner(keyPair.sk || '')
 tezos.setSignerProvider(signer)
 /// correct address :
