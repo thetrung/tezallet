@@ -1,0 +1,29 @@
+{
+  "name": "ls",
+  "version": "1.0.0",
+  "description": "This is used mainly for learning and testing wallet, contract, blockchain interaction API & framework.",
+  "main": "wallet.ts",
+  "scripts": {
+    "tsc": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thetrung/playground_tezos.git"
+  },
+  "author": "deulamco",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thetrung/playground_tezos/issues"
+  },
+  "homepage": "https://github.com/thetrung/playground_tezos#readme",
+  "dependencies": {
+    "@taquito/signer": "^12.0.0",
+    "@taquito/taquito": "^12.0.0",
+    "@taquito/utils": "^12.0.0",
+    "bip39": "^3.0.4",
+    "blakejs": "^1.2.1",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-auth": "^1.0.1"
+  }
+}
