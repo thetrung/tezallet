@@ -8,22 +8,16 @@ const balanceDiv = 1000000 // div by 1M
 let rpcUrl = "https://ithacanet.ecadinfra.com"  // Ithaca Testnet.
 let tezos = new TezosToolkit(rpcUrl)            // init new instance.
 //
-// const mnemonic_sample = [ //TODO: find out mnemonic rules to generate same seed.
-//   "run", "include", "giggle", "half", "dizzy", "worth", "broccoli", "faith", 
-//   "current", "wheel", "depth", "juice", "reduce", "width", "doctor"
-// ]
 // mnemonic_sample.join(' ').toLowerCase().replace(/(\r\n|\n|\r)/gm, ' ').trim()
 ///
 let mnemonic = 'run include giggle half dizzy worth broccoli faith current wheel depth juice reduce width doctor'
-///
-///
-let keyPair = hd.keyPairFromAccountIndex(utils.mnemonicToSeed(mnemonic, '', true), 1)
-// console.log("pkh: %s ", keyPair.pkh)
+let seed = utils.mnemonicToSeed(mnemonic, '', true)
+let keyPair = hd.keyPairFromAccountIndex(seed, 0)
 const signer = new InMemorySigner(keyPair.sk || '')
 tezos.setSignerProvider(signer)
 /// correct address :
 const address = "tz1hYe3pVtPq8JprqjFCSxrhpbfHPwDYVLXX"
-
+//
 const main = async () => {
   const account = await signer.publicKeyHash() 
   let balance = (await tezos.rpc.getBalance(account)).toNumber()

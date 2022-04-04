@@ -2,7 +2,7 @@
   "name": "ls",
   "version": "1.0.0",
   "description": "This is used mainly for learning and testing wallet, contract, blockchain interaction API & framework.",
-  "main": "wallet.ts",
+  "main": "wallet.js",
   "scripts": {
     "tsc": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,6 +21,7 @@
     "@taquito/signer": "^12.0.0",
     "@taquito/taquito": "^12.0.0",
     "@taquito/utils": "^12.0.0",
+    "@tezos-core-tools/crypto-utils": "^0.0.7",
     "bip39": "^3.0.4",
     "blakejs": "^1.2.1",
     "tweetnacl": "^1.0.3",
