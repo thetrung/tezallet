@@ -2,3 +2,5 @@
 dist
 node_modules
 crypto-utils/*.js
+
+.DS_Store
