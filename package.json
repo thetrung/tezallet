@@ -10,7 +10,8 @@
     "dist"
   ],
   "scripts": {
-    "demo" : "npm run build && node dist/index.umd.js",
+    "test": "tsc ./src/index.ts && node ./src/index.js",
+    "demo": "npm run build && node dist/index.umd.js",
     "clean": "rm -fr dist",
     "lint": "eslint . --ext js,jsx,ts,tsx --fix",
     "typing": "npx -p typescript tsc ./node_modules/tweetnacl-auth/*.js --declaration --allowJs --emitDeclarationOnly --outDir ./node_modules/tweetnacl-auth/",
@@ -35,12 +36,9 @@
     "@taquito/signer": "^12.0.0",
     "@taquito/taquito": "^12.0.0",
     "@taquito/utils": "^12.0.0",
-    "@tezos-core-tools/crypto-utils": "^0.0.7",
     "bip39": "^3.0.4",
-    "blakejs": "^1.2.1",
-    "lint": "^0.7.0",
-    "tweetnacl": "^1.0.3",
-    "tweetnacl-auth": "^1.0.1"
+    "ed25519-hd-key": "^1.2.0",
+    "lint": "^0.7.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.19.0",
