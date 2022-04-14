@@ -1,6 +1,10 @@
 import * as Bs58check from 'bs58check';
 
-const prefix = {
+type Dict = {
+  [key: string]: Uint8Array
+}
+
+const prefix : Dict = {
   tz1: new Uint8Array([6, 161, 159]),
   tz2: new Uint8Array([6, 161, 161]),
   tz3: new Uint8Array([6, 161, 164]),
@@ -23,7 +27,7 @@ const mergebuf = (b: Uint8Array, wm = Uint8Array.from([3])): Uint8Array => {
 
 const hexToBuf = (hex: string): Uint8Array => {
   return Uint8Array.from(
-    hex.match(/[\da-f]{2}/gi).map(function (h) {
+    hex!.match(/[\da-f]{2}/gi).map(function (h) {
       return parseInt(h, 16);
     })
   );
@@ -41,9 +45,9 @@ const bufToHex = (buffer: Uint8Array): string => {
 };
 
 const base58encode = (payload: Uint8Array, prefixx?: Uint8Array): string => {
-  const n = new Uint8Array(prefixx.length + payload.length);
-  n.set(prefixx);
-  n.set(payload, prefixx.length);
+  const n = new Uint8Array(prefixx!.length + payload.length);
+  n.set(prefixx!);
+  n.set(payload, prefixx!.length);
   return Bs58check.encode(Buffer.from(bufToHex(n), 'hex'));
 };
 

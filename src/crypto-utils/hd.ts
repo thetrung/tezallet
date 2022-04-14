@@ -71,7 +71,7 @@ const seedToKeyPair = (seed: Buffer, derivationPath: string): KeyPair => {
   return {
     sk: base58encode(secretKey, _prefix.edsk),
     pk: base58encode(publicKey, _prefix.edpk),
-    pkh: base58encode(blake2b(publicKey, null, 20), _prefix.tz1),
+    pkh: base58encode(blake2b(publicKey, undefined, 20), _prefix.tz1),
   };
 };
 
