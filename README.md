@@ -1,7 +1,7 @@
 ### WALKTHROUGH OF MAKING WALLET APP ON TEZOS
 This is used mainly to test how broken, all Tezos wallet related libraries are.
 
-Update 14th, April 2022:
+- Update 14th, April 2022:
 I have found new stable libraries to replace `@tezos-core-tool/crypto-utils` along with other deps of it like `tweetnacl-auth`, as `Temple Wallet` no longer use those things but their own implementations with `taquito` and `ed25519-hd-key` instead.
 
 After all broken mess, finally, we can pack all we need into this single file. Try running it as :
@@ -28,6 +28,6 @@ After all broken mess, finally, we can pack all we need into this single file. T
 - The down road from there would be other wallet API integration like `beacon`, `temple-wallet` or `ledger`.
 
 ### CONCLUSION
-I intended to build new wallet for various ideas, but after digging into tezos libraries, and all of those JS/TS mess, I feel more like wasting time there. So as usual, I document this experience back for whoever need it. As for me, that's enough and the world don't need another wallet app on Tezos chain. Maybe in the future, Tezos can upgrade node to support a more modern solution like NEAR wallet email verification.
+Problem when developing apps on web stack is the consistency of its libraries and ecosystem, which one wrong version or outdated library could ruin your whole function.
 
-A more formal approach would be reading source code of `kukai-wallet` and `temple-wallet`. They may have tactled the error with well-structured the project to avoid these troubles to happen, like compile down to JS instead of running directly via `ts-node` like I did. Because you know, write code and then transpiling it into sibling just to run, with dozen of trouble midway is painful.
+This is what I hate with this project but let's see how terrible it is on the way.
