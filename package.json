@@ -10,6 +10,7 @@
     "dist"
   ],
   "scripts": {
+    "demo" : "npm run build && node dist/index.umd.js",
     "clean": "rm -fr dist",
     "lint": "eslint . --ext js,jsx,ts,tsx --fix",
     "build": "npm run clean && npm run lint && tsc --project tsconfig.build.json && npm run bundle:esm && npm run bundle:esm:min && npm run bundle:umd && npm run bundle:umd:min && npm run build:stats",

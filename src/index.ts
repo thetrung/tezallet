@@ -48,3 +48,5 @@ async function transfer_to(account: string, address: string, amount: number)
   } 
   else console.log("error: %s", result.block)  
 }
+
+export default main;
