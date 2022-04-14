@@ -2,6 +2,9 @@
 This is used mainly to test how broken, all Tezos wallet related libraries are.
 
 It's more like a loophole, once you convert sample source into typescript to satisfy all imports because `@tezos-core-tool/crypto-utils` is too old now, then all in a sudden, some other libraries that it rely on like `tweetnacl-auth` didn't implement type description to satisfy `ts-node` requirement. But maybe, putting this into a good react boilplate can fix all problems.
+Note: 
+
+    npm run typing
 
 I also can say, most guides out there are pretty bad written, especially the official one on tezos site, which only give you typescript sample code, while in fact you still can write it with JS, even easier.
 
@@ -9,7 +12,7 @@ There you go, a broken mess.
 
 Anyway, this project still can run as: 
 
-    tsc wallet.ts && node wallet.js
+    npm run demo
 
 Also we still can generate mnemonic words, correct seed key index alike to `Temple Wallet` and `Kukai`. 
 
