@@ -7,6 +7,9 @@ import {b58cencode, prefix} from '@taquito/utils';
 import {derivePath} from 'ed25519-hd-key';
 import {validateMnemonic, mnemonicToSeedSync} from 'bip39';
 
+///
+/// Copy from Temple Wallet
+///
 const isDefined = <T>(value: T | undefined | null): value is T =>
   value !== undefined && value !== null;
 
@@ -22,14 +25,6 @@ export const trim_mnemonic = (mnemonic: string[]) => {
     .toLowerCase()
     .replace(/(\r\n|\n|\r)/gm, ' ')
     .trim();
-};
-
-export const generateMnemonic = (numberOfWords = 15): string => {
-  if ([15, 18, 21, 24].indexOf(numberOfWords) !== -1) {
-    return generateMnemonic((numberOfWords * 32) / 3);
-  } else {
-    throw new Error('InvalidNumberOfWords');
-  }
 };
 
 const mnemonicToSeed = (
@@ -73,6 +68,8 @@ export const create_signer = (mnemonic: string, index: number) => {
   return signer;
 };
 
+export const TEZOS_UNIT = 1000000;
+
 /// @description: Transfer to test wallet
 export const transfer_to = async (
   tezos: TezosToolkit,
@@ -95,7 +92,7 @@ export const transfer_to = async (
     const duration = ((new Date().getTime() - counting) % (1000 * 60)) / 1000;
     // refresh balance again.
     const balance =
-      (await tezos.rpc.getBalance(account)).toNumber() / BALANCE_DIV;
+      (await tezos.rpc.getBalance(account)).toNumber() / TEZOS_UNIT;
     console.log(
       '%ds for Tx: %s \nbalance: %d tez\n',
       duration,
@@ -106,32 +103,5 @@ export const transfer_to = async (
     console.log('error: %s', result.block);
   }
 };
-
-const BALANCE_DIV = 1000000; // div by 1M
-//
-export const demo = async () => {
-  const mnemonic =
-    'run include giggle half dizzy worth broccoli faith current wheel depth juice reduce width doctor';
-  /// correct address :
-  const address = 'tz1hYe3pVtPq8JprqjFCSxrhpbfHPwDYVLXX';
-
-  const rpcUrl = 'https://ithacanet.ecadinfra.com'; // Ithaca Testnet.
-  const tezos = new TezosToolkit(rpcUrl); // init new instance.
-
-  const signer = create_signer(mnemonic, 0);
-
-  tezos.setSignerProvider(signer);
-
-  const account = await signer.publicKeyHash();
-
-  const balance = (await tezos.rpc.getBalance(account)).toNumber();
-
-  console.log('wallet: %s \nbalance: %d tez\n', account, balance / BALANCE_DIV);
-  /// invoke test Tx:
-  await transfer_to(tezos, account, address, 0.1); //tez
-};
-
-// Test
-demo();
 
 export default {};
