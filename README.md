@@ -6,14 +6,19 @@ I have found new stable libraries to replace `@tezos-core-tool/crypto-utils` alo
 
 After all broken mess, finally, we can pack all we need into this single file. Try running it as :
 
-    npm run test
+        npm run test
+    
+- Install deps on any import :
+
+        npm i ed25519-hd-key @taquito/taquito @taquito/signer @taquito/utils bip39
+    
 
 ### BUILD TEZOS WALLET APP FLOW  
 - Overview process : 
 
-    mnemonic > seed > derive by index > b58cencode > create signer > ready to use.
+        mnemonic > seed > derive by index > b58cencode > create signer > ready to use.
 
-- Details of the flow to build your own wallet app on Tezos is like :
+#### - Details of the flow to build your own wallet app on Tezos is like :
 
 - Use `bip39` to generate mnemonic words
 
