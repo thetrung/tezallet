@@ -1,5 +1,6 @@
 /// @ts-check
-/// taquito :
+/// Install: 
+/// npm i ed25519-hd-key @taquito/taquito @taquito/signer @taquito/utils bip39
 import {TezosToolkit} from '@taquito/taquito';
 import {InMemorySigner} from '@taquito/signer';
 import {b58cencode, prefix} from '@taquito/utils';
