@@ -6,8 +6,7 @@ import {InMemorySigner} from '@taquito/signer';
 import {b58cencode, prefix} from '@taquito/utils';
 
 import {derivePath} from 'ed25519-hd-key';
-import {validateMnemonic, mnemonicToSeedSync, generateMnemonic, wordlists} from 'bip39';
-import { empty, null_to_empty } from 'svelte/internal';
+import {validateMnemonic, mnemonicToSeedSync, generateMnemonic, mnemonicToEntropy, entropyToMnemonic} from 'bip39';
 
 ///
 /// Copy from Temple Wallet
@@ -54,6 +53,24 @@ const seedToPrivateKey = (seed: Buffer, derivationPath?: string) => {
   return b58cencode(derivedSeed.slice(0, 32), prefix.edsk2);
 };
 
+/**
+ * Convert mnemonic to entropy
+ * @param mnemonic as string
+ * @returns entropy
+ */
+export const mnemonicToEntropy_ = (mnemonic: string) => {
+  return mnemonicToEntropy(mnemonic)
+
+}
+
+/**
+ * Convert entropy to mnemonic
+ * @param entropy as string
+ * @returns mnemonic
+ */
+export const entropyToMnemonic_ = (entropy: string) => {
+  return entropyToMnemonic(entropy)
+}
 
 /**
  * RPC URL pasted from 'https://tezostaquito.io/docs/rpc_nodes/'

@@ -1,6 +1,6 @@
 {
   "name": "tezallet",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "This is used mainly for learning and testing wallet, contract, blockchain interaction API & framework.",
   "main": "dist/index.js",
   "module": "dist/index.min.mjs",
@@ -39,8 +39,7 @@
     "@taquito/utils": "^12.0.0",
     "bip39": "^3.0.4",
     "ed25519-hd-key": "^1.2.0",
-    "lint": "^0.7.0",
-    "tezallet": "^0.0.3"
+    "lint": "^0.7.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.19.0",
