@@ -1,6 +1,6 @@
 {
-  "name": "ls",
-  "version": "1.0.0",
+  "name": "@thetrung/tezos-wallet",
+  "version": "0.0.1",
   "description": "This is used mainly for learning and testing wallet, contract, blockchain interaction API & framework.",
   "main": "dist/index.js",
   "module": "dist/index.min.mjs",
@@ -48,5 +48,9 @@
     "rollup": "^2.70.1",
     "terser": "^5.12.1",
     "typescript": "^4.6.3"
-  }
+  },
+  "keywords": [
+    "tezos",
+    "wallet"
+  ]
 }
