@@ -1,4 +1,8 @@
-### A EASIER WAY WALLET APP ON TEZOS
+# TEZALLET
+[![NPM](https://img.shields.io/npm/v/tezallet.svg)](https://www.npmjs.org/package/tezallet)
+[![maintainability](https://img.shields.io/codeclimate/maintainability-percentage/thetrung/tezallet?logo=code-climate&style=flat-square)](https://codeclimate.com/github/thetrung/tezallet)
+
+### A EASIER WAY TO BUILD WALLET APP ON TEZOS
 I made this because `taquito` didn't include all necessary things to compose a similar wallet function to `Temple` and `Kukai`. While old libraries like `tezos-core-tool` are so old and depricated to use nowadays.
 
 - Update 14th, April 2022:
