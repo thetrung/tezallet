@@ -6,7 +6,7 @@ import {InMemorySigner} from '@taquito/signer';
 import {b58cencode, prefix} from '@taquito/utils';
 
 import {derivePath} from 'ed25519-hd-key';
-import {validateMnemonic, mnemonicToSeedSync} from 'bip39';
+import {validateMnemonic, mnemonicToSeedSync, generateMnemonic, wordlists} from 'bip39';
 
 ///
 /// Copy from Temple Wallet
@@ -19,14 +19,6 @@ type MaybeString = string | number | boolean | object | undefined | null;
 const isString = (str: MaybeString): str is string =>
   isDefined(str) && typeof str === 'string' && str.length !== 0;
 
-/// @description: import from array of words
-export const trim_mnemonic = (mnemonic: string[]) => {
-  return mnemonic
-    .join(' ')
-    .toLowerCase()
-    .replace(/(\r\n|\n|\r)/gm, ' ')
-    .trim();
-};
 
 const mnemonicToSeed = (
   mnemonic: string,
@@ -61,45 +53,112 @@ const seedToPrivateKey = (seed: Buffer, derivationPath?: string) => {
   return b58cencode(derivedSeed.slice(0, 32), prefix.edsk2);
 };
 
-/// @description: create signer from mnemonic & index
+
+export enum RPC_URL {
+  ECAD_LABS_Mainnet = "https://mainnet.api.tez.ie",
+  ECAD_LABS_Hangzhoune = "https://hangzhounet.api.tez.ie",	
+  ECAD_LABS_Ithacane = "https://ithacanet.ecadinfra.com",	
+  SmartPy_Mainnet = "https://mainnet.smartpy.io",	
+  SmartPy_Hangzhoune = "https://hangzhounet.smartpy.io/",	
+  SmartPy_Ithacane = "https://ithacanet.smartpy.io/",	
+  Tezos_Foundation_Mainnet = "https://rpc.tzbeta.net/",
+  Tezos_Foundation_Ithacanet = "https://rpczero.tzbeta.net/",	
+  LetzBake_Mainnet = "https://teznode.letzbake.com",
+  GigaNode_Mainnet = "https://mainnet-tezos.giganode.io",	
+  GigaNode_Hangzhounet = "https://testnet-tezos.giganode.io/"
+}
+
+export let tezos:TezosToolkit = null;
+export let signer:InMemorySigner = null;
+/**
+ * init tezos toolkit with given RPC URL enum.
+ * @param rpcUrl chosen rpcURL to init.
+ */
+export const init_tezos_toolkit = (rpcUrl: RPC_URL) => {
+  // could be re-init
+  tezos = new TezosToolkit(rpcUrl)
+  return tezos
+}
+
+/**
+ * Trim the mnemonic from string array.
+ * @param mnemonic array of words
+ * @returns trimmed string
+ *  */ 
+export const trim_mnemonic = (mnemonic: string[]) => {
+  return mnemonic
+    .join(' ')
+    .toLowerCase()
+    .replace(/(\r\n|\n|\r)/gm, ' ')
+    .trim();
+};
+
+/**
+ * Generate mnemonic words as a string, from bip39 library.
+ * @param strength optional strength, default = 128.
+ * @returns string of words
+ */
+export const generate_mnemonic = (strength?: number) => {
+  return generateMnemonic(strength || 128);
+}
+
+/**
+ *  create signer from mnemonic at derive-path [index]
+ * @param mnemonic your mnemonic words at length of [3-6-9-12-15-18-21-24]
+ * @param index of your wallet
+ * @returns signer object
+ */
 export const create_signer = (mnemonic: string, index: number) => {
   const seed = mnemonicToSeed(mnemonic, '', true);
   const key = seedToPrivateKey(seed, getDerivationPath(index));
-  const signer = new InMemorySigner(key);
+  signer = new InMemorySigner(key);
+  tezos.setSignerProvider(signer);
   return signer;
 };
 
+/**
+ * Default Tezos Unit balance
+ */
 export const TEZOS_UNIT = 1000000;
 
-/// @description: Transfer to test wallet
-export const transfer_to = async (
-  tezos: TezosToolkit,
-  account: string,
-  address: string,
+/**
+ * Get balance from an address.
+ * @param account address to get balance
+ * @returns number divided by 1,000,000 unit.
+ */
+export const get_balance = async (account:string): Promise<number> => {
+  const balance = (await tezos.rpc.getBalance(account)).toNumber()
+  return balance/TEZOS_UNIT
+}
+
+/**
+ * Transfer [amount] of $xtz from current wallet to [dest] address.
+ * @param dest receiving address  
+ * @param amount (xtz) of tezos to transfer
+ * @param is_debug turn on for Tx duration
+ */
+export const transfer = async (
+  dest: string,
   amount: number,
+  is_debug = false
 ) => {
   const counting = new Date().getTime();
-  console.log('sending %d tez >> %s', amount, address);
+  if(is_debug) console.log('sending %d tez >> %s', amount, dest);
+  // sending
   const op = await tezos.wallet
-    .transfer({
-      to: address,
-      amount: amount,
-    })
+    .transfer({to: dest, amount: amount})
     .send();
   // listen for confirmation
   const result = await op.confirmation();
   ///
   if (result.completed) {
-    const duration = ((new Date().getTime() - counting) % (1000 * 60)) / 1000;
     // refresh balance again.
-    const balance =
-      (await tezos.rpc.getBalance(account)).toNumber() / TEZOS_UNIT;
-    console.log(
-      '%ds for Tx: %s \nbalance: %d tez\n',
-      duration,
-      result.block.hash,
-      balance,
-    );
+    if(is_debug) {
+      const duration = ((new Date().getTime() - counting) % (1000 * 60)) / 1000;
+      const balance = await get_balance(dest);
+      console.log('%ds for Tx: %s \nbalance: %d tez\n', 
+      duration, result.block.hash, balance);
+    }
   } else {
     console.log('error: %s', result.block);
   }
