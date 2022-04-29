@@ -7,6 +7,7 @@ import {b58cencode, prefix} from '@taquito/utils';
 
 import {derivePath} from 'ed25519-hd-key';
 import {validateMnemonic, mnemonicToSeedSync, generateMnemonic, wordlists} from 'bip39';
+import { empty, null_to_empty } from 'svelte/internal';
 
 ///
 /// Copy from Temple Wallet
@@ -54,6 +55,9 @@ const seedToPrivateKey = (seed: Buffer, derivationPath?: string) => {
 };
 
 
+/**
+ * RPC URL pasted from 'https://tezostaquito.io/docs/rpc_nodes/'
+ */
 export enum RPC_URL {
   ECAD_LABS_Mainnet = "https://mainnet.api.tez.ie",
   ECAD_LABS_Hangzhoune = "https://hangzhounet.api.tez.ie",	
@@ -71,12 +75,12 @@ export enum RPC_URL {
 export let tezos:TezosToolkit = null;
 export let signer:InMemorySigner = null;
 /**
- * init tezos toolkit with given RPC URL enum.
+ * init tezos toolkit with given RPCURL enum, or customURL if rpcURL=null.
  * @param rpcUrl chosen rpcURL to init.
  */
-export const init_tezos_toolkit = (rpcUrl: RPC_URL) => {
+export const init_tezos_toolkit = (rpcUrl: RPC_URL, customURL = '') => {
   // could be re-init
-  tezos = new TezosToolkit(rpcUrl)
+  tezos = new TezosToolkit(rpcUrl || customURL)
   return tezos
 }
 

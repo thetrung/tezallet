@@ -12,6 +12,7 @@ export const demo = async () => {
   ])
   console.log(`trim_mnemonic: ${trim_words}\n`)
 
+  // tezallet.init_tezos_toolkit(null, "https://ithacanet.ecadinfra.com");
   tezallet.init_tezos_toolkit(tezallet.RPC_URL.ECAD_LABS_Ithacane); // init new instance.
 
   const mnemonic =
