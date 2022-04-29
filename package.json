@@ -1,6 +1,6 @@
 {
-  "name": "@thetrung/tezos-wallet",
-  "version": "0.0.1",
+  "name": "tezallet",
+  "version": "0.0.2",
   "description": "This is used mainly for learning and testing wallet, contract, blockchain interaction API & framework.",
   "main": "dist/index.js",
   "module": "dist/index.min.mjs",
@@ -9,6 +9,7 @@
   "files": [
     "dist"
   ],
+  "type": "module",
   "scripts": {
     "test": "tsc ./src/index.ts && node ./src/index.js",
     "demo": "npm run build && node dist/index.umd.js",
