@@ -1,6 +1,6 @@
 {
   "name": "tezallet",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "This is used mainly for learning and testing wallet, contract, blockchain interaction API & framework.",
   "main": "dist/index.js",
   "module": "dist/index.min.mjs",
@@ -25,14 +25,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thetrung/playground_tezos.git"
+    "url": "git+https://github.com/thetrung/tezallet.git"
   },
   "author": "deulamco",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thetrung/playground_tezos/issues"
+    "url": "https://github.com/thetrung/tezallet/issues"
   },
-  "homepage": "https://github.com/thetrung/playground_tezos#readme",
+  "homepage": "https://github.com/thetrung/tezallet#readme",
   "dependencies": {
     "@taquito/signer": "^12.0.0",
     "@taquito/taquito": "^12.0.0",
