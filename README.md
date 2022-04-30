@@ -3,10 +3,9 @@
 [![maintainability](https://img.shields.io/codeclimate/maintainability-percentage/thetrung/tezallet?logo=code-climate&style=flat-square)](https://codeclimate.com/github/thetrung/tezallet)
 
 ### A EASIER WAY TO BUILD WALLET APP ON TEZOS
-I made this because `taquito` didn't include all necessary things to compose a similar wallet function to `Temple` and `Kukai`. While old libraries like `tezos-core-tool` are so old and depricated to use nowadays.
+I made this because `taquito` didn't include all necessary features to compose a similar wallet to `Temple` and `Kukai` with an exact address-index order, while also lacking a lot of essential functions, and old libraries like `tezos-core-tool`,  `tweetnacl-auth`, `tweetnacl` are so old, depricated to use nowadays.
 
-- Update 14th, April 2022:
-I replaced [`@tezos-core-tool/crypto-utils`, `tweetnacl-auth`, `tweetnacl`] => with [`ed25519-hd-key` && `bip39`] instead.
+New user/devs should be able to try on making new wallet interaction with less confusion and immediate result.
 
 *After all broken mess, finally, we can pack all we need into this single file.*
 
