@@ -62,7 +62,7 @@ const seedToPrivateKey = (seed: Buffer, derivationPath?: string) => {
  * @param mnemonic as string
  * @returns entropy
  */
-export const mnemonicToEntropy_ = (mnemonic: string) => {
+const _mnemonicToEntropy = (mnemonic: string) => {
   return mnemonicToEntropy(mnemonic)
 
 }
@@ -72,7 +72,7 @@ export const mnemonicToEntropy_ = (mnemonic: string) => {
  * @param entropy as string
  * @returns mnemonic
  */
-export const entropyToMnemonic_ = (entropy: string) => {
+const _entropyToMnemonic = (entropy: string) => {
   return entropyToMnemonic(entropy)
 }
 
@@ -145,7 +145,7 @@ export const dencrypt_data = (
  */
 export const encrypt_mnemonic = (
   mnemonic:string, pbkdf2_password :string, init_vector: Buffer) => {
-    const encoded = mnemonicToEntropy_(mnemonic);
+    const encoded = _mnemonicToEntropy(mnemonic);
     const encrypted = encrypt_data(encoded, pbkdf2_password, init_vector);
     return encrypted;
 }
@@ -160,7 +160,7 @@ export const encrypt_mnemonic = (
 export const decrypt_mnemonic = (
   encrypted: string, pbkdf2_password :string, init_vector: Buffer) => {
   const decrypted = dencrypt_data(encrypted, pbkdf2_password, init_vector);
-  const decoded = entropyToMnemonic_(decrypted);
+  const decoded = _entropyToMnemonic(decrypted);
   return decoded;
 }
 
