@@ -24,54 +24,25 @@ Full Demo at `samples/demo.js`:
         // Wallet functions
         //
         // init tezos toolkit
-        tezallet.init_tezos_toolkit(tezallet.RPC_URL.ECAD_LABS_Ithacane);
+        tezallet.init_tezos_toolkit(tezallet.RPC_URL.ECAD_LABS_Ithacane)
 
-        // generate mnemonic
+        // generate new mnemonic
         const mnemonic = tezallet.generate_mnemonic()
- 
-        // create wallet[0] 
-        tezallet.create_signer(mnemonic, 0);
+
+        // create wallet at [0] 
+        tezallet.create_signer(mnemonic, 0)
 
         // transfer -> address + amount
-        await tezallet.transfer(address, 1, true); //tez
+        await tezallet.transfer(address, 1, true) //tez
 
         //
         // Encryption
         //
-        // test pbdk2
-        // 0. init_vector (16-bytes)
-        let init_vector = tezallet.init_vector();
-        console.log(`0. init_vector: ${init_vector}\n`)
-
-        // 0.test pbdk2
+        // 0.init_vector (16-bytes)
+        let init_vector = tezallet.init_vector()
         let pbkdf2_password = tezallet.encrypt_password('user_password', 'tezallet', 16)
-        console.log(`1. pbkdf2_password = ${pbkdf2_password}\n`)
-
-        // Note:
-        // init vector size = 16
-        // pbkdf2_password length = 16
-
-        // 2.encrypt_data
-        let encrypted = tezallet.encrypt_data(mnemonic, pbkdf2_password, init_vector);
-        console.log(`2. encrypt mnemonic -> ${encrypted}\n`)
-
-        // 3.decrypt_data
-        let decrypted = tezallet.dencrypt_data(encrypted, pbkdf2_password, init_vector);
-        console.log(`3. decrypt mnemonic -> ${decrypted}\n`)
-
-        // 5.wallet[0] or 1st wallet
-        tezallet.create_signer(mnemonic, 0) 
-        /// correct address :
-        const address = 'tz1hYe3pVtPq8JprqjFCSxrhpbfHPwDYVLXX'
-        const account = await tezallet.signer.publicKeyHash()
-        const is_matched = address === account
-        console.log(`4. (${is_matched ? 'Ok':'Err'}) ${account} ${ is_matched ? '===' : '!='} ${address}\n`)
-
-        let encrypted_mne = tezallet.encrypt_mnemonic(mnemonic, pbkdf2_password, init_vector);
-        let decrypted_mne = tezallet.decrypt_mnemonic(encrypted_mne, pbkdf2_password, init_vector);
-        let assert_6 = mnemonic === decrypted_mne;
-        console.log(`5. (${assert_6 ? 'Ok':'Err'}) ${mnemonic} \n${ is_matched ? '===' : '!='} ${decrypted_mne}\n`)
-
+        let encrypted_mne = tezallet.encrypt_mnemonic(mnemonic, pbkdf2_password, init_vector)
+        let decrypted_mne = tezallet.decrypt_mnemonic(encrypted_mne, pbkdf2_password, init_vector)
 
 ### TEST && IMPROVE PACKAGE
 

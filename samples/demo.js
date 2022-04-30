@@ -1,59 +1,78 @@
 import * as tezallet from '../dist/index.mjs';
 
-export const demo = async () => {
+const mnemonic =
+'run include giggle half dizzy worth broccoli '
++'faith current wheel depth juice reduce width doctor';
 
+// Temple/Kukai address at index = [0]
+const address = 'tz1hYe3pVtPq8JprqjFCSxrhpbfHPwDYVLXX'
+
+const test_utils = ()  => {
   // test generate 
   const test_words = tezallet.generate_mnemonic()
-  console.log(`generate_mnemonic:\n${test_words}\n`)
+  console.log(`- generate_mnemonic:\n${test_words}\n`)
   
   // test trim function
   const trim_words = tezallet.trim_mnemonic(['test', 'this', 'line'])
-  console.log(`trim_mnemonic: ${trim_words}\n`)
+  console.log(`- trim_mnemonic: ${trim_words}\n`)
+
+}
+
+const test_wallet_fn = async () => {
 
   // tezallet.init_tezos_toolkit(null, "https://ithacanet.ecadinfra.com");
-  tezallet.init_tezos_toolkit(tezallet.RPC_URL.ECAD_LABS_Ithacane) // init new instance.
+  tezallet.init_tezos_toolkit(tezallet.RPC_URL.ECAD_LABS_Ithacane) 
 
-  const mnemonic =
-    'run include giggle half dizzy worth broccoli faith current wheel depth juice reduce width doctor';
+  // 5. create wallet at [0] 
+  tezallet.create_signer(mnemonic, 0) 
+  const account = await tezallet.signer.publicKeyHash()
+  const is_matched = address === account
+  console.log(`5. address[0] === other wallet `
+  +`(${is_matched ? 'Ok':'Err'}) \n`
+  + `${account} ${ is_matched ? '===' : '!='} ${address}\n`)
 
-  // 0. init_vector (16-bytes)
-  let init_vector = tezallet.init_vector();
+  console.log("6. get_balance + transfer test:")
+  const balance = await tezallet.get_balance(account)
+  console.log('\n- balance: %d xtz\n', balance)
+
+  await tezallet.transfer(address, 1, true) // 1 xtz
+}
+
+const test_encryption = async () => {
+  // Note:
+  // init vector size = 16
+  // pbkdf2_password length = 16
+  //
+  // 0. init_vector (16-bytes by default)
+  let init_vector = tezallet.init_vector(16);
   console.log(`0. init_vector: ${init_vector}\n`)
 
   // 0.test pbdk2
   let pbkdf2_password = tezallet.encrypt_password('user_password', 'tezallet', 16)
   console.log(`1. pbkdf2_password = ${pbkdf2_password}\n`)
 
-  // Note:
-  // init vector size = 16
-  // pbkdf2_password length = 16
-
   // 2.encrypt_data
-  let encrypted = tezallet.encrypt_data(mnemonic, pbkdf2_password, init_vector);
-  console.log(`2. encrypt mnemonic -> ${encrypted}\n`)
+  let encrypted = tezallet.encrypt_data("This is secret.", pbkdf2_password, init_vector);
+  console.log(`2. encrypt_data -> ${encrypted}\n`)
 
   // 3.decrypt_data
   let decrypted = tezallet.dencrypt_data(encrypted, pbkdf2_password, init_vector);
-  console.log(`3. decrypt mnemonic -> ${decrypted}\n`)
-
-  // 5.wallet[0] or 1st wallet
-  tezallet.create_signer(mnemonic, 0) 
-  /// correct address :
-  const address = 'tz1hYe3pVtPq8JprqjFCSxrhpbfHPwDYVLXX'
-  const account = await tezallet.signer.publicKeyHash()
-  const is_matched = address === account
-  console.log(`4. (${is_matched ? 'Ok':'Err'}) ${account} ${ is_matched ? '===' : '!='} ${address}\n`)
-
-  let encrypted_mne = tezallet.encrypt_mnemonic(mnemonic, pbkdf2_password, init_vector);
-  let decrypted_mne = tezallet.decrypt_mnemonic(encrypted_mne, pbkdf2_password, init_vector);
-  let assert_6 = mnemonic === decrypted_mne;
-  console.log(`5. (${assert_6 ? 'Ok':'Err'}) ${mnemonic} \n${ is_matched ? '===' : '!='} ${decrypted_mne}\n`)
+  console.log(`3. decrypt_data -> ${decrypted}\n`)
 
 
-  const balance = await tezallet.get_balance(account)
-  console.log('\nbalance: %d xtz\n', balance)
-  await tezallet.transfer(address, 1, true) //tez
+  const encrypted_mne = tezallet.encrypt_mnemonic(mnemonic, pbkdf2_password, init_vector);
+  const decrypted_mne = tezallet.decrypt_mnemonic(encrypted_mne, pbkdf2_password, init_vector);
+  const assert_6 = mnemonic === decrypted_mne;
+  console.log(
+    `4. origin vs. encrypted->decrypted (${assert_6 ? 'Ok':'Err'})\n${mnemonic} \n`
+    +`${ assert_6 ? '===' : '!='} ${decrypted_mne}\n`)
 };
+
+export const demo = async () => {
+  test_utils()
+  test_wallet_fn()
+  test_encryption()
+}
 
 demo()
 
