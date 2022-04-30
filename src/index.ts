@@ -6,7 +6,11 @@ import {InMemorySigner} from '@taquito/signer';
 import {b58cencode, prefix} from '@taquito/utils';
 
 import {derivePath} from 'ed25519-hd-key';
-import {validateMnemonic, mnemonicToSeedSync, generateMnemonic, mnemonicToEntropy, entropyToMnemonic} from 'bip39';
+import {
+  generateMnemonic, validateMnemonic, 
+  mnemonicToSeedSync, mnemonicToEntropy, 
+  entropyToMnemonic} from 'bip39';
+import { pbkdf2Sync, randomBytes, createCipheriv, createDecipheriv} from 'crypto';
 
 ///
 /// Copy from Temple Wallet
@@ -73,6 +77,63 @@ export const entropyToMnemonic_ = (entropy: string) => {
 }
 
 /**
+ * Generate 1-way encrypted password, which can't be decrypted.
+ * The only way is to encrypt every password and compare hashed result.
+ * @param password string
+ * @param salt string
+ * @returns 1-way encrypted password
+ */
+ export const encrypt_password = (
+   password: string, 
+   // optionals
+   salt = 'salt', 
+   length = 64,
+   iteration = 100000, 
+    digest = 'sha512') => {
+  const derivedKey = pbkdf2Sync(password, salt, iteration, length, digest);
+  return derivedKey.toString('hex');
+}
+
+/**
+ * encrypt/decrypt algoritm
+ * */ 
+const algorithm = "aes-256-cbc"; 
+
+// generate 16 bytes of random data
+const init_vector = randomBytes(16);
+
+// secret key generate 32 bytes of random data
+const security_key = randomBytes(32);
+
+/**
+ * Encrypt the message/data with aes-256/16/32
+ * @param message 
+ * @returns 
+ */
+export const encrypt_data = (data: string) => {
+  // init the cipher function
+  const cipher = createCipheriv(algorithm, security_key, init_vector);
+  // encrypt the message
+  let encryptedData = cipher.update(data, "utf-8", "hex");
+  encryptedData += cipher.final("hex");
+  return encryptedData;
+}
+
+/**
+ * Decrypt the encrypted message/data with aes-256/16/32
+ * @param encryptedData encrypted data to be decrypted
+ * @returns decrypted data
+ */
+export const dencrypt_data = (encrypted_data: string) => {
+  // init decipher function
+  const decipher = createDecipheriv(algorithm, security_key, init_vector);
+  let decrypted = decipher.update(encrypted_data, "hex", "utf-8");
+  decrypted += decipher.final("utf8");
+  return decrypted;
+}
+
+
+/**
  * RPC URL pasted from 'https://tezostaquito.io/docs/rpc_nodes/'
  */
 export enum RPC_URL {
@@ -119,8 +180,8 @@ export const trim_mnemonic = (mnemonic: string[]) => {
  * @param strength optional strength, default = 128.
  * @returns string of words
  */
-export const generate_mnemonic = (strength?: number) => {
-  return generateMnemonic(strength || 128);
+export const generate_mnemonic = (strength?: number, rng?:(size?: number)=> Buffer) => {
+  return generateMnemonic(strength || 128, rng);
 }
 
 /**
@@ -129,10 +190,10 @@ export const generate_mnemonic = (strength?: number) => {
  * @param index of your wallet
  * @returns signer object
  */
-export const create_signer = (mnemonic: string, index: number) => {
-  const seed = mnemonicToSeed(mnemonic, '', true);
+export const create_signer = (mnemonic: string, index: number, salt = '') => {
+  const seed = mnemonicToSeed(mnemonic, salt, true);
   const key = seedToPrivateKey(seed, getDerivationPath(index));
-  signer = new InMemorySigner(key);
+  signer = new InMemorySigner(key, salt);
   tezos.setSignerProvider(signer);
   return signer;
 };

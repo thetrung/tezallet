@@ -20,12 +20,43 @@ Full Demo at `samples/demo.js`:
 
         import * as tezallet from 'tezallet';
 
+        //
+        // Wallet functions
+        //
+        // init tezos toolkit
         tezallet.init_tezos_toolkit(tezallet.RPC_URL.ECAD_LABS_Ithacane);
-        const mnemonic = tezallet.generate_mnemonic()
-        tezallet.create_signer(mnemonic, 0); 
-        // wallet[0] or 1st wallet.
 
+        // generate mnemonic
+        const mnemonic = tezallet.generate_mnemonic()
+ 
+        // create wallet[0] 
+        tezallet.create_signer(mnemonic, 0);
+
+        // transfer -> address + amount
         await tezallet.transfer(address, 1, true); //tez
+
+        //
+        // Encryption
+        //
+        // test pbdk2
+        let pbkdf2_password = tezallet.encrypt_password('user_password', 'tezallet', 32)
+        console.log(`0. pbkdf2_password = ${pbkdf2_password}\n`)
+
+        // 1.mnemonic -> entropy
+        let encoded = tezallet.mnemonicToEntropy_(mnemonic)
+        console.log(`1. mnemonic -> entropy: ${encoded}\n`)
+
+        // 2.encrypt_data
+        let encrypted = tezallet.encrypt_data(encoded, pbkdf2_password);
+        console.log(`2. encrypt entropy -> ${encrypted}\n`)
+
+        // 3.decrypt_data
+        let decrypted = tezallet.dencrypt_data(encrypted, pbkdf2_password);
+        console.log(`3. decrypt entropy -> ${decrypted}\n`)  
+
+        // 4.entropy -> mnemonic
+        let decoded = tezallet.entropyToMnemonic_(decrypted)
+        console.log(`4. entropy -> mnemonic: ${decoded}\n`)
 
 
 ### TEST && IMPROVE PACKAGE
@@ -51,6 +82,8 @@ or this if you want to try without tezallet:
 that I'm using in this package:
 
         bip39
+        pbkdf2
+        crypto
         ed25519-hd-key 
         @taquito/taquito 
         @taquito/signer 
@@ -77,4 +110,10 @@ that I'm using in this package:
 - The down road from there would be other wallet API integration like `beacon`, `temple-wallet` or `ledger`.
 
 ### CONCLUSION
+
 Problem when developing apps on web stack is the consistency of its libraries and ecosystem, which one wrong version or outdated library could ruin your whole function. This is what I hate with this project and want to improve further, even when I may not use it.
+
+
+### DISCLAIMER
+
+THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
