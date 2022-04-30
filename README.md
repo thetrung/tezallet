@@ -58,6 +58,19 @@ Full Demo at `samples/demo.js`:
         let decoded = tezallet.entropyToMnemonic_(decrypted)
         console.log(`4. entropy -> mnemonic: ${decoded}\n`)
 
+        // 5. wallet[0] or 1st wallet.
+        tezallet.create_signer(mnemonic, 0) 
+        /// correct address :
+        const address = 'tz1hYe3pVtPq8JprqjFCSxrhpbfHPwDYVLXX'
+        const account = await tezallet.signer.publicKeyHash()
+        const is_matched = address === account
+        console.log(`5. (${is_matched ? 'Ok':'Err'}) ${account} ${ is_matched ? '===' : '!='} ${address}\n`)
+
+        let encrypted_mne = tezallet.encrypt_mnemonic(mnemonic, pbkdf2_password, init_vector);
+        let decrypted_mne = tezallet.decrypt_mnemonic(encrypted_mne, pbkdf2_password, init_vector);
+        let assert_6 = mnemonic === decrypted_mne;
+        console.log(`6. (${assert_6 ? 'Ok':'Err'}) ${mnemonic} \n${ is_matched ? '===' : '!='} ${decrypted_mne}\n`)
+
 
 ### TEST && IMPROVE PACKAGE
 

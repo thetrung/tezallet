@@ -99,20 +99,22 @@ export const entropyToMnemonic_ = (entropy: string) => {
  * */ 
 const algorithm = "aes-256-cbc"; 
 
-// generate 16 bytes of random data
-const init_vector = randomBytes(16);
-
-// secret key generate 32 bytes of random data
-const security_key = randomBytes(32);
+/**
+ * generate 16 random bytes by default.
+ * @returns Buffer of randombytes 
+ */
+export const init_vector = (size = 16) => { return randomBytes(size); }
 
 /**
- * Encrypt the message/data with aes-256/16/32
- * @param message 
- * @returns 
- */
-export const encrypt_data = (data: string) => {
+*  Encrypt the data with aes-256-cbc
+* @param encrypted_data string to be encrypted
+* @param security_key pbkdf2 password
+* @param init_vector 16+ randomBytes
+* @returns string of encrypted data
+*/
+export const encrypt_data = (data: string, pbkdf2_password = 'tezallet', init_vector: Buffer) => {
   // init the cipher function
-  const cipher = createCipheriv(algorithm, security_key, init_vector);
+  const cipher = createCipheriv(algorithm, Buffer.from(pbkdf2_password), init_vector);
   // encrypt the message
   let encryptedData = cipher.update(data, "utf-8", "hex");
   encryptedData += cipher.final("hex");
@@ -120,18 +122,47 @@ export const encrypt_data = (data: string) => {
 }
 
 /**
- * Decrypt the encrypted message/data with aes-256/16/32
- * @param encryptedData encrypted data to be decrypted
- * @returns decrypted data
+ *  Decrypt the encrypted message/data with aes-256-cbc
+ * @param encrypted_data string to be decrypted
+ * @param security_key pbkdf2 password
+ * @param init_vector 16+ randomBytes
+ * @returns string of decrypted data
  */
-export const dencrypt_data = (encrypted_data: string) => {
-  // init decipher function
-  const decipher = createDecipheriv(algorithm, security_key, init_vector);
+export const dencrypt_data = (
+  encrypted_data: string, security_key: string, init_vector: Buffer) => {
+  const decipher = createDecipheriv(algorithm, Buffer.from(security_key), init_vector);
   let decrypted = decipher.update(encrypted_data, "hex", "utf-8");
   decrypted += decipher.final("utf8");
   return decrypted;
 }
 
+/**
+ * Encrypt mnemonic with a password+salt
+ * @param mnemonic string of words
+ * @param pbkdf2_password string created password with pbkdf2
+ * @param init_vector string salt with 16 bytes length
+ * @returns encrypted data string
+ */
+export const encrypt_mnemonic = (
+  mnemonic:string, pbkdf2_password :string, init_vector: Buffer) => {
+    const encoded = mnemonicToEntropy_(mnemonic);
+    const encrypted = encrypt_data(encoded, pbkdf2_password, init_vector);
+    return encrypted;
+}
+
+/**
+ * Decrypt mnemonic with a password+salt
+ * @param encrypted encrypted mnemonic by encrypte_mnemonic function.
+ * @param pbkdf2_password created password with pbkdf2
+ * @param init_vector with 16 bytes length
+ * @returns decrypted data
+ */
+export const decrypt_mnemonic = (
+  encrypted: string, pbkdf2_password :string, init_vector: Buffer) => {
+  const decrypted = dencrypt_data(encrypted, pbkdf2_password, init_vector);
+  const decoded = entropyToMnemonic_(decrypted);
+  return decoded;
+}
 
 /**
  * RPC URL pasted from 'https://tezostaquito.io/docs/rpc_nodes/'
