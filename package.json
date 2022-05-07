@@ -1,6 +1,6 @@
 {
   "name": "tezallet",
-  "version": "0.0.81",
+  "version": "0.0.82",
   "description": "This is used mainly for learning and testing wallet, contract, blockchain interaction API & framework.",
   "main": "dist/index.js",
   "module": "dist/index.min.mjs",

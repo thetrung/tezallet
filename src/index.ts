@@ -253,10 +253,14 @@ export const get_balance = async (account:string): Promise<number> => {
 export const transfer = async (
   dest: string,
   amount: number,
-  is_debug = false
+  is_debug = false,
+  signer: InMemorySigner = null
 ) => {
   const counting = new Date().getTime();
+  // Log
   if(is_debug) console.log('sending %d tez >> %s', amount, dest);
+  // If custom signer is needed
+  if(signer) tezos.setSignerProvider(signer)
   // sending
   const op = await tezos.wallet
     .transfer({to: dest, amount: amount})
