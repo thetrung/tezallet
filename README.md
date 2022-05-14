@@ -34,6 +34,9 @@ Full Demo at `samples/demo.js`:
         // transfer -> address + amount
         await tezallet.transfer(address, 1, true) //tez
 
+        // reset toolkit instance
+        tezallet.reset()
+        
         //
         // Encryption
         //
