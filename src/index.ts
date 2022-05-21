@@ -181,16 +181,23 @@ export enum RPC_URL {
   GigaNode_Hangzhounet = "https://testnet-tezos.giganode.io/"
 }
 
-export let tezos:TezosToolkit = null;
-export let signer:InMemorySigner = null;
+/**
+ * TezosToolkit instance
+ */
+export let toolkit:TezosToolkit;
+
+/**
+ * InMemorySigner
+ */
+export let signer:InMemorySigner;
 /**
  * init tezos toolkit with given RPCURL enum, or customURL if rpcURL=null.
  * @param rpcUrl chosen rpcURL to init.
  */
 export const init_tezos_toolkit = (rpcUrl: RPC_URL, customURL = '') => {
   // could be re-init
-  tezos = new TezosToolkit(rpcUrl || customURL)
-  return tezos
+  toolkit = new TezosToolkit(rpcUrl || customURL)
+  return toolkit
 }
 
 /**
@@ -225,7 +232,7 @@ export const create_signer = (mnemonic: string, index: number, salt = '') => {
   const seed = mnemonicToSeed(mnemonic, salt, true);
   const key = seedToPrivateKey(seed, getDerivationPath(index));
   signer = new InMemorySigner(key, salt);
-  tezos.setSignerProvider(signer);
+  toolkit.setSignerProvider(signer);
   return signer;
 };
 
@@ -240,7 +247,7 @@ export const TEZOS_UNIT = 1000000;
  * @returns number divided by 1,000,000 unit.
  */
 export const get_balance = async (account:string): Promise<number> => {
-  const balance = (await tezos.rpc.getBalance(account)).toNumber()
+  const balance = (await toolkit.rpc.getBalance(account)).toNumber()
   return balance/TEZOS_UNIT
 }
 
@@ -260,9 +267,9 @@ export const transfer = async (
   // Log
   if(is_debug) console.log('sending %d tez >> %s', amount, dest);
   // If custom signer is needed
-  if(signer) tezos.setSignerProvider(signer)
+  if(signer) toolkit.setSignerProvider(signer)
   // sending
-  const op = await tezos.wallet
+  const op = await toolkit.wallet
     .transfer({to: dest, amount: amount})
     .send();
   // listen for confirmation
@@ -280,5 +287,18 @@ export const transfer = async (
     console.log('error: %s', result.block);
   }
 };
+
+/**
+ * Re-init TezosToolkit instance again for fresh season.
+ * @returns nothing.
+ */
+export const reset = () => {
+
+  // override with new instance
+  toolkit = new TezosToolkit(toolkit.rpc.getRpcUrl())
+
+  // clean up signer
+  signer = null
+}
 
 export default {};

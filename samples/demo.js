@@ -23,6 +23,7 @@ const test_wallet_fn = async () => {
   // tezallet.init_tezos_toolkit(null, "https://ithacanet.ecadinfra.com");
   tezallet.init_tezos_toolkit(tezallet.RPC_URL.ECAD_LABS_Ithacane) 
 
+
   // 5. create wallet at [0] 
   tezallet.create_signer(mnemonic, 0) 
   const account = await tezallet.signer.publicKeyHash()
@@ -36,6 +37,9 @@ const test_wallet_fn = async () => {
   console.log('\n- balance: %d xtz\n', balance)
 
   await tezallet.transfer(address, 1, true) // 1 xtz
+
+  // Reset instance
+  tezallet.reset()
 }
 
 const test_encryption = async () => {
