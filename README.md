@@ -10,7 +10,7 @@ New user/devs should be able to try on making new wallet interaction with less c
 *After all broken mess, finally, we can pack all we need into this single file.*
 
 
-### INSTALLATION
+### [INSTALLATION](https://www.npmjs.com/package/tezallet)
 
         npm i tezallet
 
