@@ -1,7 +1,7 @@
 {
   "name": "tezallet",
-  "version": "0.0.92",
-  "description": "This is used mainly for learning and testing wallet, contract, blockchain interaction API & framework.",
+  "version": "0.0.93",
+  "description": "Tezallet is a simpler way to interact with Tezos blockchain, mostly for wallet operation.",
   "main": "dist/index.js",
   "module": "dist/index.min.mjs",
   "unpkg": "dist/index.umd.min.js",
@@ -35,6 +35,7 @@
   "homepage": "https://github.com/thetrung/tezallet#readme",
   "dependencies": {
     "@taquito/signer": "^12.0.0",
+    "@taquito/tzip12": "^12.0.0",
     "@taquito/taquito": "^12.0.0",
     "@taquito/utils": "^12.0.0",
     "bip39": "^3.0.4",

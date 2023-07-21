@@ -1,6 +1,7 @@
 /// @ts-check
 /// Install: 
 /// npm i ed25519-hd-key @taquito/taquito @taquito/signer @taquito/utils bip39
+import {Tzip12Module, tzip12} from '@taquito/tzip12';
 import {TezosToolkit} from '@taquito/taquito';
 import {InMemorySigner} from '@taquito/signer';
 import {b58cencode, prefix} from '@taquito/utils';
@@ -211,8 +212,10 @@ export let signer:InMemorySigner;
  * @param rpcUrl chosen rpcURL to init.
  */
 export const init_tezos_toolkit = (rpcUrl: RPC_URL, customURL = '') => {
-  // could be re-init
+  // Init by RPC_URL :
   toolkit = new TezosToolkit(rpcUrl || customURL)
+  // adding tzip12 to read metadata of FA2 tokens :
+  toolkit.addExtension(new Tzip12Module())
   return toolkit
 }
 
@@ -278,27 +281,55 @@ export const transfer = async (
   amount: number,
   is_debug = false,
   signer: InMemorySigner = null,
-  fa2_token: string
+  fa2_token: string = null,
+  fa2_token_id = 0 
 ) => {
   const counting = new Date().getTime();
-  // Log
-  if(is_debug) console.log('sending %d tez >> %s', amount, dest);
   // If custom signer is needed
   if(signer) toolkit.setSignerProvider(signer)
   // check fa2 token
-  let contract = null;
+  let contract = null
+  let transfer_params = null
   if (fa2_token) {
-    contract = await toolkit.wallet.at(fa2_token)
+    contract = await toolkit.wallet.at(fa2_token, tzip12)
     // is valid contract ?
     if(!contract){
       console.log('error: contract %s is not valid.', fa2_token)
       return;
     }
+    else {
+      console.log('valid contract : %s ', fa2_token)
+
+      const pkh = await toolkit.wallet.pkh()
+      const metadata = await contract.tzip12().getTokenMetadata(fa2_token_id)
+      if(is_debug) console.log('metadata: %s \ndecimals: %d',
+      metadata, 10 ** metadata.decimals)
+      transfer_params = [
+        {
+          from_: pkh,
+          txs: 
+          [
+            {
+                to_: dest,
+                token_id: fa2_token_id,
+                amount: amount * (10 ** metadata.decimals) // decimals 
+            },
+            // could be a batch/airdrop here {}
+          ]
+        }
+      ]
+      // Log
+      if(is_debug) console.log('sending %d $%s >> %s', amount, metadata.symbol ,dest);
+    }
+  } else {
+    // Log
+    if(is_debug) console.log('sending %d %s >> %s', amount, 'tez' ,dest);
   }
+  
   // sending
   const op = fa2_token == null && contract == null ? 
   await toolkit.wallet.transfer({to: dest, amount: amount}).send() :
-  await contract.methods.transfer({to: dest, amount: amount}).send();  
+  await contract.methods.transfer(transfer_params).send();  
   // listen for confirmation
   const result = await op.confirmation();
   ///

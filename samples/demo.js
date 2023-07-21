@@ -20,7 +20,6 @@ const test_utils = ()  => {
 
 const test_wallet_fn = async () => {
 
-  // tezallet.init_tezos_toolkit(null, "https://ithacanet.ecadinfra.com");
   tezallet.init_tezos_toolkit(tezallet.RPC_URL.ECAD_Labs_Ghostnet) 
 
 
@@ -32,11 +31,18 @@ const test_wallet_fn = async () => {
   +`(${is_matched ? 'Ok':'Err'}) \n`
   + `${account} ${ is_matched ? '===' : '!='} ${address}\n`)
 
+  // 6. transfer tez to address
   console.log("6. get_balance + transfer test:")
   const balance = await tezallet.get_balance(account)
   console.log('\n- balance: %d xtz\n', balance)
 
   await tezallet.transfer(address, 1, true) // 1 xtz
+
+  // 7. transfer FA2 token test
+  console.log("7. transfer FA2 token test :") 
+  // test FA2_TOKEN on ghostnet 
+  const FA2_TOKEN = 'KT1G5K4egfuWWs4Zs5WWhoXPRVETD1qKPYJ1'
+  await tezallet.transfer(address, 100.0, true, null, FA2_TOKEN, 0)
 
   // Reset instance
   tezallet.reset()
