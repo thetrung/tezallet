@@ -21,7 +21,7 @@ const test_utils = ()  => {
 const test_wallet_fn = async () => {
 
   // tezallet.init_tezos_toolkit(null, "https://ithacanet.ecadinfra.com");
-  tezallet.init_tezos_toolkit(tezallet.RPC_URL.ECAD_LABS_Ithacane) 
+  tezallet.init_tezos_toolkit(tezallet.RPC_URL.ECAD_Labs_Ghostnet) 
 
 
   // 5. create wallet at [0] 

@@ -166,19 +166,35 @@ export const decrypt_mnemonic = (
 
 /**
  * RPC URL pasted from 'https://tezostaquito.io/docs/rpc_nodes/'
+ * ( updated 21th July, 2023 )
+ *  
+ * ECAD Labs	Mainnet	https://mainnet.api.tez.ie	
+ * ECAD Labs	Ghostnet	https://ghostnet.ecadinfra.com	
+ * ECAD Labs	Nairobinet	https://nairobinet.ecadinfra.com	
+ * ECAD Labs	Mumbainet	https://mumbainet.ecadinfra.com	
+ * SmartPy	Mainnet	https://mainnet.smartpy.io	
+ * SmartPy	Ghostnet	https://ghostnet.smartpy.io	
+ * Tezos Foundation	Mainnet	https://rpc.tzbeta.net/	
+ * Marigold	Mainnet	https://mainnet.tezos.marigold.dev/	
+ * Marigold	Ghostnet	https://ghostnet.tezos.marigold.dev/	
+ * Marigold	Nairobinet	https://nairobinet.tezos.marigold.dev/	
+ * Marigold	Mumbainet	https://mumbainet.tezos.marigold.dev/	
+ * TezTools	Mainnet	https://eu01-node.teztools.net/	
+ *
  */
 export enum RPC_URL {
-  ECAD_LABS_Mainnet = "https://mainnet.api.tez.ie",
-  ECAD_LABS_Hangzhoune = "https://hangzhounet.api.tez.ie",	
-  ECAD_LABS_Ithacane = "https://ithacanet.ecadinfra.com",	
-  SmartPy_Mainnet = "https://mainnet.smartpy.io",	
-  SmartPy_Hangzhoune = "https://hangzhounet.smartpy.io/",	
-  SmartPy_Ithacane = "https://ithacanet.smartpy.io/",	
-  Tezos_Foundation_Mainnet = "https://rpc.tzbeta.net/",
-  Tezos_Foundation_Ithacanet = "https://rpczero.tzbeta.net/",	
-  LetzBake_Mainnet = "https://teznode.letzbake.com",
-  GigaNode_Mainnet = "https://mainnet-tezos.giganode.io",	
-  GigaNode_Hangzhounet = "https://testnet-tezos.giganode.io/"
+  ECAD_Labs_Mainnet	= "https://mainnet.api.tez.ie",
+  ECAD_Labs_Ghostnet	= "https://ghostnet.ecadinfra.com",
+  ECAD_Labs_Nairobinet	= "https://nairobinet.ecadinfra.com",
+  ECAD_Labs_Mumbainet	= "https://mumbainet.ecadinfra.com",
+  SmartPy_Mainnet	= "https://mainnet.smartpy.io",
+  SmartPy_Ghostnet	= "https://ghostnet.smartpy.io",
+  Tezos_Foundation_Mainnet	= "https://rpc.tzbeta.net/",
+  Marigold_Mainnet	= "https://mainnet.tezos.marigold.dev/",
+  Marigold_Ghostnet	= "https://ghostnet.tezos.marigold.dev/",
+  Marigold_Nairobinet	= "https://nairobinet.tezos.marigold.dev/",
+  Marigold_Mumbainet	= "https://mumbainet.tezos.marigold.dev/",
+  TezTools_Mainnet	= "https://eu01-node.teztools.net/"
 }
 
 /**
@@ -261,17 +277,28 @@ export const transfer = async (
   dest: string,
   amount: number,
   is_debug = false,
-  signer: InMemorySigner = null
+  signer: InMemorySigner = null,
+  fa2_token: string
 ) => {
   const counting = new Date().getTime();
   // Log
   if(is_debug) console.log('sending %d tez >> %s', amount, dest);
   // If custom signer is needed
   if(signer) toolkit.setSignerProvider(signer)
+  // check fa2 token
+  let contract = null;
+  if (fa2_token) {
+    contract = await toolkit.wallet.at(fa2_token)
+    // is valid contract ?
+    if(!contract){
+      console.log('error: contract %s is not valid.', fa2_token)
+      return;
+    }
+  }
   // sending
-  const op = await toolkit.wallet
-    .transfer({to: dest, amount: amount})
-    .send();
+  const op = fa2_token == null && contract == null ? 
+  await toolkit.wallet.transfer({to: dest, amount: amount}).send() :
+  await contract.methods.transfer({to: dest, amount: amount}).send();  
   // listen for confirmation
   const result = await op.confirmation();
   ///
