@@ -31,8 +31,11 @@ Full Demo at `samples/demo.js`:
         // create wallet at [0] 
         tezallet.create_signer(mnemonic, 0)
 
-        // transfer -> address + amount
-        await tezallet.transfer(address, 1, true) //tez
+        // transfer -> ( address, amount, is_debug? )
+        await tezallet.transfer(address, 1.0, true) //tez
+
+        // transfer FA2 Token -> ( address, amount, is_debug?, custom_signer?, fa2_token?, fa2_token_id? )
+        await tezallet.transfer(address, 1.0, true, null, FA2_TOKEN, FA2_TOKEN_ID) // FA2
 
         // reset toolkit instance
         tezallet.reset()
@@ -74,7 +77,8 @@ that I'm using in this package:
         ed25519-hd-key 
         @taquito/taquito 
         @taquito/signer 
-        @taquito/utils 
+        @taquito/utils
+        @taquito/tzip12
 
 
 ### BUILD TEZOS WALLET APP FLOW  
