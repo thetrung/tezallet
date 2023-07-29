@@ -24,3 +24,9 @@ I intend to use TZKT API for account queries/info.
     
     https://api.tzkt.io/v1/operations/transactions/{hash}
 
+### To query account balances of certain token :
+
+    https://api.tzkt.io/v1/tokens/balances?account=[tz1....]&token.contract=[KT1...]&select=balance
+
+- we can select any desirable field with `select=[field]` or just remove it to get the whole info of account with certain contract.
+
