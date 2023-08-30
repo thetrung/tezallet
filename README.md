@@ -37,6 +37,9 @@ Full Demo at `samples/demo.js`:
         // transfer FA2 Token -> ( address, amount, is_debug?, custom_signer?, fa2_token?, fa2_token_id? )
         await tezallet.transfer(address, 1.0, true, null, FA2_TOKEN, FA2_TOKEN_ID) // FA2
 
+        // validate_address -> (address)
+        await tezallet.validate_address('tz123')
+
         // reset toolkit instance
         tezallet.reset()
         

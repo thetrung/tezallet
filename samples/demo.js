@@ -1,3 +1,4 @@
+import { validateAddress } from '@taquito/utils';
 import * as tezallet from '../dist/index.mjs';
 
 const mnemonic =
@@ -33,6 +34,14 @@ const test_wallet_fn = async () => {
 
   // 6. transfer tez to address
   console.log("6. get_balance + transfer test:")
+  const test_invalid_address = 'tz1hYe3pVtPq8JprqjFCSxrhpbfHPwDYVLX'
+  if(tezallet.validate_address(test_invalid_address)){
+    console.log('invalid address:', test_invalid_address)
+    await tezallet.get_balance(test_invalid_address)
+    await tezallet.transfer(test_invalid_address,1, true)
+  } else {
+    console.log('valid address:', test_invalid_address)
+  }
   const balance = await tezallet.get_balance(account)
   console.log('\n- balance: %d xtz\n', balance)
 

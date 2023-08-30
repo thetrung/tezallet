@@ -4,7 +4,7 @@
 import {Tzip12Module, tzip12} from '@taquito/tzip12';
 import {TezosToolkit} from '@taquito/taquito';
 import {InMemorySigner} from '@taquito/signer';
-import {b58cencode, prefix} from '@taquito/utils';
+import {b58cencode, prefix, validateAddress} from '@taquito/utils';
 
 import {derivePath} from 'ed25519-hd-key';
 import {
@@ -261,11 +261,32 @@ export const create_signer = (mnemonic: string, index: number, salt = '') => {
 export const TEZOS_UNIT = 1000000;
 
 /**
+ * @description — Used to check if an address or a contract address is valid.
+ * @param address - Address to be validated.
+ * @returns — 0 (NO_PREFIX_MATCHED), 1 (INVALID_CHECKSUM), 2 (INVALID_LENGTH) or 3 (VALID).
+ */
+export const validate_address = async (address:string):Promise<boolean> =>{
+  const result = validateAddress(address)
+  switch(result){
+    case 0: console.log('[validate_address]: NO_PREFIX_MATCHED ', address); break
+    case 1: console.log('[validate_address]: INVALID_CHECKSUM ', address); break
+    case 2: console.log('[validate_address]: INVALID_LENGTH ', address); break
+    case 3: console.log('[validate_address]: VALID_ADDRESS ', address); break
+  }
+  return result == 3
+}
+
+/**
  * Get balance from an address.
  * @param account address to get balance
  * @returns number divided by 1,000,000 unit.
  */
 export const get_balance = async (account:string): Promise<number> => {
+  // validate dest-address first :
+  if(validateAddress(account) != 3) {
+    console.log('[get_balance] error: address %s is not valid.', account)
+    return -1;
+  }
   const balance = (await toolkit.rpc.getBalance(account)).toNumber()
   return balance/TEZOS_UNIT
 }
@@ -284,6 +305,11 @@ export const transfer = async (
   fa2_token: string = null,
   fa2_token_id = 0 
 ) => {
+  // validate dest-address first :
+  if(validateAddress(dest)!=3) {
+    console.log('[transfer] error: address %s is not valid.', dest)
+    return;
+  }
   const counting = new Date().getTime();
   // If custom signer is needed
   if(signer) toolkit.setSignerProvider(signer)
