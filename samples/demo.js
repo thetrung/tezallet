@@ -45,6 +45,7 @@ const test_wallet_fn = async () => {
   const balance = await tezallet.get_balance(account)
   console.log('\n- balance: %d xtz\n', balance)
 
+  await tezallet.transfer(address, -1, true) // -1 xtz
   await tezallet.transfer(address, 1, true) // 1 xtz
 
   // 7. transfer FA2 token test

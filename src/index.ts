@@ -1,10 +1,12 @@
 /// @ts-check
 /// Install: 
-/// npm i ed25519-hd-key @taquito/taquito @taquito/signer @taquito/utils bip39
+/// npm i ed25519-hd-key @taquito/taquito @taquito/signer @taquito/utils bip39 @quipuswap/sdk
 import {Tzip12Module, tzip12} from '@taquito/tzip12';
 import {TezosToolkit} from '@taquito/taquito';
 import {InMemorySigner} from '@taquito/signer';
 import {b58cencode, prefix, validateAddress} from '@taquito/utils';
+
+// import {swap, batchify } from '@quipuswap/sdk';
 
 import {derivePath} from 'ed25519-hd-key';
 import {
@@ -307,9 +309,15 @@ export const transfer = async (
 ) => {
   // validate dest-address first :
   if(validateAddress(dest)!=3) {
-    console.log('[transfer] error: address %s is not valid.', dest)
+    console.log('[transfer] error: address %s is not valid ', dest)
     return;
   }
+  // validate amount > 0 :
+  if(amount <= 0) {
+    console.log('[transfer] error: amount( %d ) need to be bigger than zero.', amount)
+    return;
+  }
+  
   const counting = new Date().getTime();
   // If custom signer is needed
   if(signer) toolkit.setSignerProvider(signer)
@@ -371,6 +379,113 @@ export const transfer = async (
     console.log('error: %s', result.block);
   }
 };
+
+// /**
+//  * @description estimate a swap value ( QuipuSwap SDK)
+//  * @param tezos TezosToolkit object with signer.
+//  * @param fa12_factory QuipuSwap fa1.2 factory contract 
+//  * @param fa20_Factory QuipuSwap fa2.0 factory contract
+//  * @param from_asset [source KT..address] or ['tez' for XTZ]
+//  * @param to_asset [dest KT..address] or ['tez' for XTZ]
+//  * @param id_from source contract id, zero by default
+//  * @param id_to dest contract id, zero by default
+//  */
+// export const estimate_swap = async (
+//   tezos: TezosToolkit, fa12_factory: string, fa20_Factory: string,
+//   from_asset: string, to_asset: string, amount: number,
+//   id_from:number = null, id_to:number = null) => {
+//   /**
+//    * From QuipuSwap SDK sample :
+//    */
+//   const factories = {
+//     fa1_2Factory: fa12_factory,
+//     fa2Factory: fa20_Factory,
+//   };
+//   (async () => {
+//     try { 
+//       // Configure Pair :
+//       const XTZ = "tez"
+//       // from asset :
+//       const src_asset = from_asset == XTZ ? XTZ : {
+//         contract: from_asset,
+//         id: id_from ? id_from : 0
+//       }
+//       // to asset :
+//       const dest_asset = to_asset == XTZ ? XTZ : {
+//         contract: from_asset,
+//         id: id_to ? id_from : 0
+//       };
+//       // ETA :
+//       const estimated_value = await estimateSwap(
+//         tezos,
+//         factories,
+//         src_asset,
+//         dest_asset,
+//         { inputValue: amount }
+//       )
+//       console.info(estimated_value)
+//     } catch (err) {
+//       console.error(err);
+//     }
+//   })();
+// }
+
+
+// /**
+//  * @description swap token A -> token B ( QuipuSwap SDK )
+//  * @param tezos TezosToolkit object with signer.
+//  * @param fa12_factory QuipuSwap fa1.2 factory contract 
+//  * @param fa20_Factory QuipuSwap fa2.0 factory contract
+//  * @param from_asset [source KT..address] or ['tez' for XTZ]
+//  * @param to_asset [dest KT..address] or ['tez' for XTZ]
+//  * @param id_from source contract id, zero by default
+//  * @param id_to dest contract id, zero by default
+//  * @param slippage 0.5% by default
+//  */
+// export const swap_token = async (
+//   tezos: TezosToolkit, fa12_factory: string, fa20_Factory: string,
+//   from_asset: string, to_asset: string, amount: number,
+//   id_from:number = null, id_to:number = null,
+//   slippage = 0.005 /** 0.5% */) => {
+//   /**
+//    * From QuipuSwap SDK sample :
+//    */
+//   const factories = {
+//     fa1_2Factory: fa12_factory,
+//     fa2Factory: fa20_Factory,
+//   };
+//   (async () => {
+//     try { 
+//       // Configure Pair :
+//       const XTZ = "tez"
+//       // from asset :
+//       const src_asset = from_asset == XTZ ? XTZ : {
+//         contract: from_asset,
+//         id: id_from ? id_from : 0
+//       }
+//       // to asset :
+//       const dest_asset = to_asset == XTZ ? XTZ : {
+//         contract: from_asset,
+//         id: id_from ? id_from : 0
+//       };
+//       // ETA :
+//       const swap_params = await swap(
+//         tezos,
+//         factories,
+//         src_asset,
+//         dest_asset,
+//         amount,
+//         slippage
+//       )
+//       const op = await batchify(tezos.wallet.batch([]), swap_params).send();
+//       console.info(op.opHash);
+//       await op.confirmation();
+//       console.info("Complete");
+//     } catch (err) {
+//       console.error(err);
+//     }
+//   })();
+// }
 
 /**
  * Re-init TezosToolkit instance again for fresh season.

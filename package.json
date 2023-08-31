@@ -1,6 +1,6 @@
 {
   "name": "tezallet",
-  "version": "0.0.94",
+  "version": "0.0.95",
   "description": "Tezallet is a simpler way to interact with Tezos blockchain, mostly for wallet operation.",
   "main": "dist/index.js",
   "module": "dist/index.min.mjs",
